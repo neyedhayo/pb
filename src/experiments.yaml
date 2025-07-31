@@ -1,0 +1,270 @@
+tracker:
+  output_file: "emissions.csv"
+  client_output_file: "client_emissions.csv"
+  server_output_file: "server_emissions.csv"
+  output_dir: "/home/emeka/PrivacyBench/logs/emissions" #<--- edit to match your log directory
+  base_mem_dir: "/home/emeka/PrivacyBench/data/base_memory.csv" #<--- edit to match yours
+  allow_multiple_runs : True 
+  log_level: "ERROR"
+  measure_power_secs: 10
+
+experiments:
+  # Baselines
+  - name: "CNN Baseline"
+    epochs: 50
+    batch_size: 32
+    learning_rate: 0.00025 #0.00025 for skin_lesions & 0.00021 for Alzheimer
+    num_workers: 4
+    tolerance: 7
+
+  - name: "ViT Baseline"
+    epochs: 50
+    batch_size: 32 #16
+    learning_rate: 5e-5
+    num_workers: 4
+    tolerance: 7
+
+  # Federated Learning
+  - name: "FL (CNN)"
+    epochs: 15
+    batch_size: 32
+    learning_rate: 0.0001
+    tolerance: 10
+    num_workers: 4
+    num_rounds: 1 #5
+    num_clients: 3
+    num_cpus: 1
+    num_gpus: 0.0
+    log_to_driver: False
+
+  - name: "FL (ViT)"
+    epochs: 10 #20
+    batch_size: 32 #16
+    learning_rate: 5e-5
+    tolerance: 10
+    num_workers: 4
+    num_rounds: 5
+    num_clients: 3
+    num_cpus: 2
+    num_gpus: 0.0
+    log_to_driver: False
+
+  # Federated Learning With Secure Multi-Party Computation (Additive)
+  - name: "FL + SMPC (CNN)"
+    epochs: 15 
+    batch_size: 64
+    learning_rate: 0.00021
+    tolerance: 10
+    num_rounds: 5
+    num_clients: 3
+    num_cpus: 2     
+    num_gpus: 1
+    "num_shares": 3
+    "reconstruction_threshold": 2
+    "max_weight": 2000
+    "clipping_range": 8.0
+    "quantization_range": 4194304 #<--- 2**22
+    "modulus_range": 4294967296   #<--- 2**32
+    "timeout": null
+
+  - name: "FL + SMPC (ViT)"
+    epochs: 10
+    batch_size: 32
+    learning_rate: 5e-5
+    tolerance: 10
+    num_rounds: 5
+    num_clients: 3
+    num_cpus: 2 
+    num_gpus: 1
+    "num_shares": 3
+    "reconstruction_threshold": 2
+    "max_weight": 6000
+    "clipping_range": 8.0
+    "quantization_range": 4194304 #<--- 2**22
+    "modulus_range": 4294967296   #<--- 2**32
+    "timeout": null
+
+  # Differential Privacy (with Opacus Privacy Engine)
+  - name: "DP (CNN)"
+    epochs: 50
+    batch_size: 32
+    learning_rate: 0.00021
+    tolerance: 7
+    num_workers: 4
+    num_rounds: 5
+    dp_params:
+      epsilon: 0.1 #1.0]      #<--- Privacy budget (ε)
+      delta: 1e-5          #<--- Fixed failure probability
+      clip_norm: 0.5       #<--- Gradient clipping
+      #noise_multiplier:   # same as epsilon (ε)
+      max_grad_norm: 1.0
+      poisson_sampling: false
+      clipping_per_layer: true
+
+  - name: "DP (ViT)"
+    epochs: 10
+    batch_size: 16
+    learning_rate: 5e-5
+    tolerance: 10
+    num_workers: 4
+    num_rounds: 5
+    dp_params:
+      epsilon: 0.5 #1.0
+      delta: 1e-5
+      clip_norm: 1.0
+
+  # Federated Learning With Central Differential Privacy (Server-Side)
+  - name: "FL + CDP-SF (CNN)"
+    epochs: 1 #5, 15
+    batch_size: 64
+    learning_rate: 0.002 #0.0001
+    tolerance: 10
+    num_rounds: 1 #20 #5
+    num_clients: 3
+    dp_params:
+      clip_type: "fixed"
+      clip_norm: 1.0
+
+  - name: "FL + CDP-SA (CNN)"
+    epochs: 15
+    batch_size: 128
+    learning_rate: 0.0001
+    tolerance: 10
+    num_rounds: 5
+    num_clients: 3
+    dp_params:
+      epsilon: 0.5 #1.0
+      delta: 1e-5
+      clip_type: "adaptive"
+      clip_norm: 1.0
+
+  - name: "FL + CDP-SF (ViT)"
+    epochs: 10
+    batch_size: 64
+    learning_rate: 5e-5
+    tolerance: 10
+    num_rounds: 5
+    num_clients: 3
+    dp_params:
+      epsilon: 0.5 #1.0
+      delta: 1e-5
+      clip_type: "fixed"
+      clip_norm: 1.0
+
+  - name: "FL + CDP-SA (ViT)"
+    epochs: 10
+    batch_size: 32
+    learning_rate: 5e-5
+    tolerance: 10
+    num_rounds: 5
+    num_clients: 3
+    dp_params:
+      epsilon: 0.5 #1.0
+      delta: 1e-5
+      clip_type: "adaptive"
+      clip_norm: 1.0
+
+  # Federated Learning With Central Differential Privacy (Client-Side)
+  - name: "FL + CDP-CF (CNN)"
+    epochs: 15
+    batch_size: 128
+    learning_rate: 0.0001
+    tolerance: 10
+    num_rounds: 5
+    num_clients: 3
+    dp_params:
+      epsilon: 0.5 #1.0
+      delta: 1e-5
+      clip_type: "fixed"
+      clip_norm: 1.0
+  
+  - name: "FL + CDP-CA (CNN)"
+    epochs: 15
+    batch_size: 128
+    learning_rate: 0.0001
+    tolerance: 10
+    num_rounds: 5
+    num_clients: 3
+    dp_params:
+      epsilon: 0.5 #1.0
+      delta: 1e-5
+      clip_type: "adaptive"
+      clip_norm: 1.0
+
+  - name: "FL + CDP-CF (ViT)"
+    epochs: 10
+    batch_size: 32
+    learning_rate: 5e-5
+    tolerance: 10
+    num_rounds: 5
+    num_clients: 3
+    dp_params:
+      epsilon: 0.5 #1.0
+      delta: 1e-5
+      clip_type: "fixed"
+      clip_norm: 1.0
+
+  - name: "FL + CDP-CA (ViT)"
+    epochs: 10
+    batch_size: 32
+    learning_rate: 5e-5
+    tolerance: 10
+    num_rounds: 3 #5
+    num_clients: 3
+    dp_params:
+      epsilon: 0.5 #1.0
+      delta: 1e-5
+      clip_type: "adaptive"
+      clip_norm: 1.0
+
+  # Federated Learning With Local Differential Privacy Modifiers
+  - name: "FL + LDP-Mod (CNN)"
+    epochs: 10
+    batch_size: 32
+    learning_rate: 5e-5
+    tolerance: 10
+    num_rounds: 5
+    num_clients: 3
+    dp_params:
+      epsilon: 0.5 #1.0
+      delta: 1e-5
+      clip_type: "fixed"
+      clip_norm: 1.0
+
+  - name: "FL + LDP-Mod (ViT)"
+    epochs: 10
+    batch_size: 16
+    learning_rate: 5e-5
+    tolerance: 10
+    num_rounds: 5
+    num_clients: 3
+    dp_params:
+      epsilon: 0.5 #1.091052
+      delta: 1e-5
+      clip_type: "adaptive"
+      clip_norm: 1.0
+
+  # Federated Learning With Local Differential Privacy (Privacy Engine)
+  - name: "FL + LDP-PE (CNN)"
+    epochs: 10
+    batch_size: 32
+    learning_rate: 5e-5
+    tolerance: 10
+    num_rounds: 5
+    num_clients: 3
+    dp_params:
+      epsilon: 0.5 #1.0
+      target_delta: 1e-5
+      max_grad_norm: 1.0
+
+  - name: "FL + LDP-PE (ViT)"
+    epochs: 10
+    batch_size: 16 #32
+    learning_rate: 5e-5
+    tolerance: 10
+    num_rounds: 3 #5
+    num_clients: 3
+    dp_params:
+      epsilon: 0.5 #1.0
+      target_delta: 1e-5
+      max_grad_norm: 1.0

@@ -1,0 +1,33 @@
+[project]
+name = "privacybench"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "albumentations>=2.0.6",
+    "codecarbon>=2.8.3",
+    "datasets>=3.3.2",
+    "flwr[simulation]>=1.15.2",
+    "jupyter>=1.1.1",
+    "lightning>=2.5.0.post0",
+    "loguru>=0.7.3",
+    "matplotlib>=3.10.1",
+    "numpy<2.0",
+    "opacus==1.5.3",
+    "pandas>=2.2.3",
+    "protobuf>=4.25.6",
+    "python-dotenv>=1.1.0",
+    "scikit-learn>=1.6.1",
+    "seaborn>=0.13.2",
+    "syft>=0.3.0",
+    "torch>=2.6.0",
+    "torchmetrics>=1.7.1",
+    "torchvision>=0.21.0",
+    "tqdm>=4.67.1",
+    "transformers>=4.49.0",
+    "wandb>=0.19.11",
+    "watermark>=2.5.0",
+]
+
+
