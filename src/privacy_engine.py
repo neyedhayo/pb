@@ -183,7 +183,8 @@ def train_model(data_name: str, experiment_name: ExperimentName, base_type: str 
                 module=model,
                 optimizer=optimizer,
                 data_loader=dp_loader,
-                noise_multiplier=config['dp_params'].get('epsilon')[0], #<--- [0] [1] = 0.1, 1.0
+                # noise_multiplier=config['dp_params'].get('epsilon')[0], #<--- [0] [1] = 0.1, 1.0
+                noise_multiplier=config['dp_params'].get('epsilon'),
                 max_grad_norm=config['dp_params'].get('max_grad_norm'),
                 poisson_sampling=config['dp_params'].get('poisson_sampling'),
                 clipping_per_layer=config['dp_params'].get('clipping_per_layer'),
